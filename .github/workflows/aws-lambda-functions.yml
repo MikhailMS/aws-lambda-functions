@@ -22,10 +22,10 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: ${{ matrix.go }}
+        go-version: '${{ matrix.go }}'
 
-    - name: Install dependencies
-      run: go install
+    # - name: Install dependencies
+    #   run: go install
 
     - name: Run tests
       run: go test -v ./...
