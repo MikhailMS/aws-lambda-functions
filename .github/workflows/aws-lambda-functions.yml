@@ -38,13 +38,13 @@ jobs:
         with:
           go-version: 1.20.0
 
-      - name: check pwd
-        run: pwd
+      - name: Create deploy folder
+        run: mkdir ./deploy
       - name: Build Go function
         run: GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -tags lambda.norpc -o bootstrap main.go
       - uses: montudor/action-zip@v1
         with:
-          args: zip -qq -r lambda.zip bootstrap
+          args: zip -qq -r ./deploy/lambda.zip bootstrap
       - name: Upload Go function
         uses: actions/upload-artifact@v2
         with:
