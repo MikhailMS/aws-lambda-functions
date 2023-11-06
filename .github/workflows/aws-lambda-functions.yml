@@ -22,41 +22,39 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: '${{ matrix.go }}'
-
-    # - name: Install dependencies
-    #   run: go install
+        go-version: ${{ matrix.go }}
 
     - name: Run tests
       run: go test -v ./...
-  # PushToS3:
-  #   timeout-minutes: 120
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Set up Checkout
-  #       uses: actions/checkout@v3
-  #     - name: Setup Go
-  #       uses: actions/setup-go@v3
-  #       with:
-  #         go-version: 1.20
 
-  #     - name: Build Go function
-  #       run: GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -tags lambda.norpc -o bootstrap main.go
-  #     - uses: montudor/action-zip@v1
-  #       with:
-  #         args: zip -qq -r ./deploy/lambda.zip . -i bootstrap
-  #     - name: Upload Go function
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: lambda.zip
-  #         path: ./deploy
-  #     - name: Upload S3    
-  #       uses: shallwefootball/s3-upload-action@master
-  #       id: S3
-  #       with:
-  #         aws_key_id:            ${{secrets.AWS_KEY_ID}}
-  #         aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-  #         aws_bucket:            ${{secrets.AWS_BUCKET}}
-  #         source_dir:            ./deploy   
-  #     - name: Link To Golang zip
-  #       run: echo "https://s3.amazonaws.com/bucketName/${{steps.S3.outputs.object_key}}"
+  PushToS3:
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Checkout
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.20.0
+
+      - name: Build Go function
+        run: GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -tags lambda.norpc -o bootstrap main.go
+      - uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r ./deploy/lambda.zip . -i bootstrap
+      - name: Upload Go function
+        uses: actions/upload-artifact@v2
+        with:
+          name: lambda.zip
+          path: ./deploy
+      - name: Upload S3    
+        uses: shallwefootball/s3-upload-action@master
+        id: S3
+        with:
+          aws_key_id:            ${{secrets.AWS_ACCESS_KEY}}
+          aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket:            ${{secrets.AWS_BUCKET_NAME}}
+          source_dir:            ./deploy   
+      - name: Link To Golang zip
+        run: echo "https://s3.amazonaws.com/${{secrets.AWS_BUCKET}}/${{steps.S3.outputs.object_key}}"
