@@ -44,7 +44,7 @@ jobs:
         run: GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -tags lambda.norpc -o bootstrap main.go
       - uses: montudor/action-zip@v1
         with:
-          args: zip -qq -r ./deploy/lambda.zip . -i bootstrap
+          args: zip -qq -r lambda.zip bootstrap
       - name: Upload Go function
         uses: actions/upload-artifact@v2
         with:
@@ -57,6 +57,6 @@ jobs:
           aws_key_id:            ${{secrets.AWS_ACCESS_KEY}}
           aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket:            ${{secrets.AWS_BUCKET_NAME}}
-          source_dir:            ./deploy   
+          source_dir:            ./deploy
       - name: Link To Golang zip
         run: echo "https://s3.amazonaws.com/${{secrets.AWS_BUCKET}}/${{steps.S3.outputs.object_key}}"
