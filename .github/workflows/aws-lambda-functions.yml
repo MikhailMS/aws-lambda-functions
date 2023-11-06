@@ -24,6 +24,9 @@ jobs:
       with:
         go-version: ${{ matrix.go }}
 
+    - name: Install dependencies
+      run: go install
+
     - name: Run tests
       run: go test -v ./...
   # PushToS3:
