@@ -38,6 +38,8 @@ jobs:
         with:
           go-version: 1.20.0
 
+      - name: check pwd
+        run: pwd
       - name: Build Go function
         run: GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -tags lambda.norpc -o bootstrap main.go
       - uses: montudor/action-zip@v1
