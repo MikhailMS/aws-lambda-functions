@@ -79,6 +79,7 @@ jobs:
   # Push Lambda Functions in AWS S3
   ##
   #PushToS3ReturnIPLambda:
+  #  needs: TestReturnIPLambda
   #  timeout-minutes: 120
   #  runs-on: ubuntu-latest
   #  steps:
@@ -118,6 +119,7 @@ jobs:
   #      run: aws s3 cp ./deploy/lambda.zip s3://${{secrets.AWS_BUCKET_NAME}}/return_ip_lambda.zip
 
   #PushToS3FetchGoVersionsLambda:
+  #  needs: TestFetchGoVersionsLambda
   #  timeout-minutes: 120
   #  runs-on: ubuntu-latest
   #  steps:
@@ -157,6 +159,7 @@ jobs:
   #      run: aws s3 cp ./deploy/lambda.zip s3://${{secrets.AWS_BUCKET_NAME}}/fetch_go_versions_lambda.zip
 
   #PushToS3CustomAuthLambda:
+  #  needs: TestCustomAuthLambda
   #  timeout-minutes: 120
   #  runs-on: ubuntu-latest
   #  steps:
@@ -172,7 +175,7 @@ jobs:
   #      run: mkdir ./deploy
   #    - name: Build Go function
   #      working-directory: ./custom_auth
-  #      run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -tags lambda.norpc -o bootstrap main.go
+  #      run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-X main.TokenSecret=${{secrets.TOKEN_SECRET}}" -tags lambda.norpc -o bootstrap main.go
   #    - uses: montudor/action-zip@v1
   #      working-directory: ./custom_auth
   #      with:
