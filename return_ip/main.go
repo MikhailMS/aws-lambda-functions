@@ -25,7 +25,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	resp, err := http.Get(DefaultHTTPGetAddress)
 	if err != nil {
     return events.APIGatewayProxyResponse{
-      Body: fmt.Sprintf("Error: %v", err)
+      Body: fmt.Sprintf("Error: %v", err),
     }, err
 	}
 
@@ -39,7 +39,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	ip, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
     return events.APIGatewayProxyResponse{
-      Body: fmt.Sprintf("Error: %v", err)
+      Body: fmt.Sprintf("Error: %v", err),
     }, err
 	}
 
