@@ -11,7 +11,7 @@ jobs:
   # Test Lambda Functions
   ##
   TestCustomAuthLambda:
-    name: Test package against last 3 Go versions
+    name: Test Custom Auth Lambda against last 3 Go versions
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -32,7 +32,7 @@ jobs:
       run: go test -v ./...
 
   TestFetchGoVersionsLambda:
-    name: Test package against last 3 Go versions
+    name: Test Fetch Go Versions Lambda  against last 3 Go versions
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -53,7 +53,7 @@ jobs:
       run: go test -v ./...
 
   TestReturnIPLambda:
-    name: Test package against last 3 Go versions
+    name: Test Return IP Lambda  against last 3 Go versions
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
