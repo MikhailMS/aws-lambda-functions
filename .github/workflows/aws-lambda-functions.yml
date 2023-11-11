@@ -7,7 +7,10 @@ on:
     branches: [ main ]
 
 jobs:
-  Test:
+  ###
+  # Test Lambda Functions
+  ##
+  TestCustomAuthLambda:
     name: Test package against last 3 Go versions
     runs-on: ${{ matrix.os }}
     strategy:
@@ -25,9 +28,57 @@ jobs:
         go-version: ${{ matrix.go }}
 
     - name: Run tests
+      working-directory: ./custom_auth
       run: go test -v ./...
 
-  PushToS3:
+  TestFetchGoVersionsLambda:
+    name: Test package against last 3 Go versions
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        go: [1.18, 1.19, 1.20.0]
+        os:   [ubuntu-20.04]
+    steps:
+    - name: Set up Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go }}
+
+    - name: Run tests
+      working-directory: ./fetch_go_versions
+      run: go test -v ./...
+
+  TestReturnIPLambda:
+    name: Test package against last 3 Go versions
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        go: [1.18, 1.19, 1.20.0]
+        os:   [ubuntu-20.04]
+    steps:
+    - name: Set up Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go }}
+
+    - name: Run tests
+      working-directory: ./return_ip
+      run: go test -v ./...
+  ###
+
+
+  ###
+  # Push Lambda Functions in AWS S3
+  ##
+  PushToS3ReturnIPLambda:
     timeout-minutes: 120
     runs-on: ubuntu-latest
     steps:
@@ -39,13 +90,17 @@ jobs:
           go-version: 1.20.0
 
       - name: Create deploy folder
+        working-directory: ./return_ip
         run: mkdir ./deploy
       - name: Build Go function
+        working-directory: ./return_ip
         run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -tags lambda.norpc -o bootstrap main.go
       - uses: montudor/action-zip@v1
+        working-directory: ./return_ip
         with:
           args: zip -qq -r ./deploy/lambda.zip bootstrap
       - name: Upload Go function
+        working-directory: ./return_ip
         uses: actions/upload-artifact@v2
         with:
           name: lambda.zip
@@ -59,4 +114,84 @@ jobs:
           aws-region:            eu-west-2
 
       - name: Upload to S3
-        run: aws s3 cp ./deploy/lambda.zip s3://${{secrets.AWS_BUCKET_NAME}}/lambda.zip
+        working-directory: ./return_ip
+        run: aws s3 cp ./deploy/lambda.zip s3://${{secrets.AWS_BUCKET_NAME}}/return_ip_lambda.zip
+
+  PushToS3FetchGoVersionsLambda:
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Checkout
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.20.0
+
+      - name: Create deploy folder
+        working-directory: ./fetch_go_versions
+        run: mkdir ./deploy
+      - name: Build Go function
+        working-directory: ./fetch_go_versions
+        run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -tags lambda.norpc -o bootstrap main.go
+      - uses: montudor/action-zip@v1
+        working-directory: ./fetch_go_versions
+        with:
+          args: zip -qq -r ./deploy/lambda.zip bootstrap
+      - name: Upload Go function
+        working-directory: ./fetch_go_versions
+        uses: actions/upload-artifact@v2
+        with:
+          name: lambda.zip
+          path: ./deploy
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            eu-west-2
+
+      - name: Upload to S3
+        working-directory: ./fetch_go_versions
+        run: aws s3 cp ./deploy/lambda.zip s3://${{secrets.AWS_BUCKET_NAME}}/fetch_go_versions_lambda.zip
+
+  PushToS3CustomAuthLambda:
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Checkout
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.20.0
+
+      - name: Create deploy folder
+        working-directory: ./custom_auth
+        run: mkdir ./deploy
+      - name: Build Go function
+        working-directory: ./custom_auth
+        run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -tags lambda.norpc -o bootstrap main.go
+      - uses: montudor/action-zip@v1
+        working-directory: ./custom_auth
+        with:
+          args: zip -qq -r ./deploy/lambda.zip bootstrap
+      - name: Upload Go function
+        working-directory: ./custom_auth
+        uses: actions/upload-artifact@v2
+        with:
+          name: lambda.zip
+          path: ./deploy
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            eu-west-2
+
+      - name: Upload to S3
+        working-directory: ./custom_auth
+        run: aws s3 cp ./deploy/lambda.zip s3://${{secrets.AWS_BUCKET_NAME}}/custom_auth_lambda.zip
+  ###
