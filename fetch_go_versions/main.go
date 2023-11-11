@@ -32,9 +32,9 @@ type Versions struct {
 
 type Version struct {
   Version    string `json:"version"`
-  Stable     bool   `json: stable`
+  Stable     bool   `json:"stable"`
   ReleaseUrl string `json:"release_url"`
-  Files      []File `json: files`
+  Files      []File `json:"files"`
 }
 
 type File struct {
@@ -50,7 +50,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	resp, err := http.Get(GetGoVersionsURL)
 	if err != nil {
     return events.APIGatewayProxyResponse{
-      Body: fmt.Sprintf("Error: %v", err)
+      Body: fmt.Sprintf("Error: %v", err),
     }, err
 	}
 
@@ -65,36 +65,36 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	rawJson, err := io.ReadAll(resp.Body)
 	if err != nil {
     return events.APIGatewayProxyResponse{
-      Body: fmt.Sprintf("Error: %v", err)
+      Body: fmt.Sprintf("Error: %v", err),
     }, err
 	}
 
-  var goVersions Versions
+  var goVersions []Version
 
   err = json.Unmarshal(rawJson, &goVersions)
 	if err != nil {
     return events.APIGatewayProxyResponse{
-      Body: fmt.Sprintf("Error: %v", err)
+      Body: fmt.Sprintf("Error: %v", err),
     }, err
 	}
 
 	if len(goVersions) == 0 {
     return events.APIGatewayProxyResponse{
-      Body:       fmt.Sprintf("Error: %v", ErrNoIP),
+      Body:       fmt.Sprintf("Error: %v", ErrNoVersions),
       StatusCode: 404,
-    }, ErrNoIP
+    }, ErrNoVersions
 	}
 
   // Step 3. Marshall struct so it could be returned to the Lambda caller
-  responseBody, err := json.Marshal(goVersions[0:5])
+  responseBody, err := json.Marshal(goVersions[0])
  	if err != nil {
     return events.APIGatewayProxyResponse{
-      Body: fmt.Sprintf("Error: %v", err)
+      Body: fmt.Sprintf("Error: %v", err),
     }, err
 	}
 
 	return events.APIGatewayProxyResponse{
-		Body:       responseBody,
+		Body:       string(responseBody),
 		StatusCode: 200,
 	}, nil
 }
@@ -102,4 +102,3 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 func main() {
 	lambda.Start(handler)
 }
-
