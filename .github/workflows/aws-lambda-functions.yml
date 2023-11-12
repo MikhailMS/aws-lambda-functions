@@ -100,7 +100,7 @@ jobs:
         with:
           args: zip -qq -r ./deploy/lambda.zip bootstrap
       - name: Upload Go function
-        working-directory: ./return_ip
+        #working-directory: ./return_ip
         uses: actions/upload-artifact@v2
         with:
           name: lambda.zip
@@ -139,7 +139,7 @@ jobs:
         with:
           args: zip -qq -r ./deploy/lambda.zip bootstrap
       - name: Upload Go function
-        working-directory: ./fetch_go_versions
+        #working-directory: ./fetch_go_versions
         uses: actions/upload-artifact@v2
         with:
           name: lambda.zip
@@ -178,7 +178,7 @@ jobs:
         with:
           args: zip -qq -r ./deploy/lambda.zip bootstrap
       - name: Upload Go function
-        working-directory: ./custom_auth
+        #working-directory: ./custom_auth
         uses: actions/upload-artifact@v2
         with:
           name: lambda.zip
