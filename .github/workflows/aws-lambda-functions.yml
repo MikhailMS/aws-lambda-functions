@@ -174,9 +174,13 @@ jobs:
       - name: Build Go function
         working-directory: ./custom_auth
         run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-X main.TokenSecret=${{secrets.TOKEN_SECRET}}" -tags lambda.norpc -o bootstrap main.go
-      - uses: montudor/action-zip@v1
-        with:
-          args: zip -qq -r ./custom_auth/deploy/lambda.zip . -i bootstrap          
+      # - uses: montudor/action-zip@v1
+      #   with:
+      #     args: zip -qq -r ./custom_auth/deploy/lambda.zip . -i bootstrap
+      - name: Create zip
+        working-directory: ./custom_auth
+        run: zip -r -q ./deploy/lambda.zip bootstrap
+        
       - name: Upload Go function
         #working-directory: ./custom_auth
         uses: actions/upload-artifact@v2
