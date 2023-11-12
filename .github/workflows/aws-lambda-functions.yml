@@ -97,7 +97,6 @@ jobs:
         working-directory: ./return_ip
         run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -tags lambda.norpc -o bootstrap main.go
       - uses: montudor/action-zip@v1
-        working-directory: ./return_ip
         with:
           args: zip -qq -r ./deploy/lambda.zip bootstrap
       - name: Upload Go function
@@ -137,7 +136,6 @@ jobs:
         working-directory: ./fetch_go_versions
         run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -tags lambda.norpc -o bootstrap main.go
       - uses: montudor/action-zip@v1
-        working-directory: ./fetch_go_versions
         with:
           args: zip -qq -r ./deploy/lambda.zip bootstrap
       - name: Upload Go function
@@ -177,7 +175,6 @@ jobs:
         working-directory: ./custom_auth
         run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-X main.TokenSecret=${{secrets.TOKEN_SECRET}}" -tags lambda.norpc -o bootstrap main.go
       - uses: montudor/action-zip@v1
-        working-directory: ./custom_auth
         with:
           args: zip -qq -r ./deploy/lambda.zip bootstrap
       - name: Upload Go function
