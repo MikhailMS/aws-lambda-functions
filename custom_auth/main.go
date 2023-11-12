@@ -67,9 +67,13 @@ func handler(ctx context.Context, event events.APIGatewayCustomAuthorizerRequest
 
   // Step 4. At this point token is Valid, so we need to get principal out and return ALLOW response
   claims, ok := parsedToken.Claims.(jwt.MapClaims)
+  if !ok {
+    return events.APIGatewayCustomAuthorizerResponse{}, errors.New("Error: Failed to parse claims")
+  }
+
+  principal, ok := claims["principalID"].(string)
   if ok {
-    principal := claims["principalID"].(string)
-    return generatePolicy(fmt.Sprintf("%v", principal), "Allow", event.MethodArn), nil
+    return generatePolicy(principal, "Allow", event.MethodArn), nil
   }
 
   // This is only called if everything is great, but principalID is not encoded into token
