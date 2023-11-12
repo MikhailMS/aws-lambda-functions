@@ -104,8 +104,8 @@ jobs:
       - name: Upload Go function
         uses: actions/upload-artifact@v2
         with:
-          name: lambda.zip
-          path: ./return_ip/deploy
+          name: return_ip_lambda.zip
+          path: ./return_ip/deploy/lambda.zip
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
@@ -144,8 +144,8 @@ jobs:
       - name: Upload Go function
         uses: actions/upload-artifact@v2
         with:
-          name: lambda.zip
-          path: ./fetch_go_versions/deploy
+          name: fetch_go_versions_lambda.zip
+          path: ./fetch_go_versions/deploy/lambda.zip
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
@@ -184,8 +184,8 @@ jobs:
       - name: Upload Go function
         uses: actions/upload-artifact@v2
         with:
-          name: lambda.zip
-          path: ./custom_auth/deploy
+          name: custom_auth_lambda.zip
+          path: ./custom_auth/deploy/lambda.zip
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
