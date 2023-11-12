@@ -48,21 +48,21 @@ func handler(ctx context.Context, event events.APIGatewayCustomAuthorizerRequest
   }
 
   // Step 2. Parse token
-  parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-    _, ok := token.Method.(*jwt.SigningMethodHMAC)
+  parsedToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+    _, ok := t.Method.(*jwt.SigningMethodHMAC)
     if !ok {
-      return events.APIGatewayCustomAuthorizerResponse{}, errors.New("Error: Invalid token")
+      return nil, errors.New(fmt.Sprintf("Unexpected signing method: %v", t.Header["alg"]))
     }
-    return "", nil
+    
+    return []byte(TokenSecret), nil
   })
   if err != nil {
-    return events.APIGatewayCustomAuthorizerResponse{}, errors.New("Error: Invalid token")
+    return events.APIGatewayCustomAuthorizerResponse{}, err
 	}
 
   // Step 3. If token invalid, return DENY reponse
   if !parsedToken.Valid {
     return generatePolicy("", "Deny", "*"), err
-
   }
 
   // Step 4. At this point token is Valid, so we need to get principal out and return ALLOW response
@@ -73,7 +73,7 @@ func handler(ctx context.Context, event events.APIGatewayCustomAuthorizerRequest
   }
 
   // This is only called if everything is great, but principalID is not encoded into token
-  return events.APIGatewayCustomAuthorizerResponse{}, errors.New("Error: Invalid token")
+  return events.APIGatewayCustomAuthorizerResponse{}, errors.New("Error: Missing claims")
 }
 
 func main() {

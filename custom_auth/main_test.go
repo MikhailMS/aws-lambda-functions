@@ -1,7 +1,6 @@
 package main
 
 import (
-  // "fmt"
   "errors"
   "context"
   "testing"
@@ -29,32 +28,51 @@ func TestHandler(t *testing.T) {
     assert.Equal(t, errors.New("Error: Invalid token"), err)
 	})
 
-	// t.Run("Invalid Token", func(t *testing.T) {
-    // expectedResponse := events.APIGatewayCustomAuthorizerResponse{
-      // PrincipalID: "",
-      // PolicyDocument: events.APIGatewayCustomAuthorizerPolicy{
-        // Version: "2012-10-17",
-        // Statement: []events.IAMPolicyStatement{
-          // {
-            // Action:   []string{"execute-api:Invoke"},
-            // Effect:   "Deny",
-            // Resource: []string{"*"},
-          // },
-        // },
-      // },
-      // UsageIdentifierKey: "",
-    // }
+	t.Run("Incorrect Token", func(t *testing.T) {
+    expectedResponse := events.APIGatewayCustomAuthorizerResponse{}
+    expectedError    := "token is malformed: token contains an invalid number of segments"
 
-    // response, err := handler(context.Background(), events.APIGatewayCustomAuthorizerRequest{
-      // Type:               "TOKEN",
-      // AuthorizationToken: "invalid_token",
-      // MethodArn:          "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
-    // })
-	// 	if err == nil {
-	// 		t.Fatal("Error failed to trigger with an invalid request")
-	// 	}
+    response, err := handler(context.Background(), events.APIGatewayCustomAuthorizerRequest{
+      Type:               "TOKEN",
+      AuthorizationToken: "invalid_token",
+      MethodArn:          "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
+    })
+		if err == nil {
+			t.Fatal("Error failed to trigger with an invalid request")
+		}
 
-    // assert.Equal(t, expectedResponse, response)
+    assert.Equal(t, expectedResponse, response)
+    assert.Equal(t, expectedError, err.Error())
+	})
+
+  // t.Run("Invalid Token", func(t *testing.T) {
+  //   expectedResponse := events.APIGatewayCustomAuthorizerResponse{
+  //     PrincipalID: "",
+  //     PolicyDocument: events.APIGatewayCustomAuthorizerPolicy{
+  //       Version: "2012-10-17",
+  //       Statement: []events.IAMPolicyStatement{
+  //         {
+  //           Action:   []string{"execute-api:Invoke"},
+  //           Effect:   "Deny",
+  //           Resource: []string{"*"},
+  //         },
+  //       },
+  //     },
+  //     UsageIdentifierKey: "",
+  //   }
+
+  //   response, err := handler(context.Background(), events.APIGatewayCustomAuthorizerRequest{
+  //     Type:               "TOKEN",
+  //     AuthorizationToken: "invalid_token",
+  //     MethodArn:          "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
+  //   })
+		// if err == nil {
+			// t.Fatal("Error failed to trigger with an invalid request")
+		// }
+
+  //   t.Fatal(err)
+
+  //   assert.Equal(t, expectedResponse, response)
 	// })
 
 	t.Run("Valid Token", func(t *testing.T) {
