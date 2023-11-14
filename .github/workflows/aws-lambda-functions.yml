@@ -196,5 +196,6 @@ jobs:
 
       - name: Upload to S3
         working-directory: ./custom_auth
-        run: aws s3 cp ./deploy/lambda.zip s3://${{secrets.AWS_BUCKET_NAME}}/custom_auth_lambda.zip
+        # run: aws s3 cp ./deploy/lambda.zip s3://${{secrets.AWS_BUCKET_NAME}}/custom_auth_lambda.zip
+        run: aws s3api put-object --bucket {{secrets.AWS_BUCKET_NAME}} --key custom_auth_lambda.zip --body ./deploy/lambda.zip --checksum-sha256 "$(openssl dgst -sha256 -binary ./deploy/lambda.zip | base64)"
   ###
