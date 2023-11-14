@@ -116,7 +116,7 @@ jobs:
 
       - name: Upload to S3
         working-directory: ./return_ip
-        run: aws s3 cp ./deploy/lambda.zip s3://${{secrets.AWS_BUCKET_NAME}}/return_ip_lambda.zip
+        run: aws s3api put-object --bucket ${{secrets.AWS_BUCKET_NAME}} --key return_ip_lambda.zip --body ./deploy/lambda.zip --checksum-sha256 "$(openssl dgst -sha256 -binary ./deploy/lambda.zip | base64)"
 
   PushToS3FetchGoVersionsLambda:
     needs: TestFetchGoVersionsLambda
@@ -156,7 +156,7 @@ jobs:
 
       - name: Upload to S3
         working-directory: ./fetch_go_versions
-        run: aws s3 cp ./deploy/lambda.zip s3://${{secrets.AWS_BUCKET_NAME}}/fetch_go_versions_lambda.zip
+        run: aws s3api put-object --bucket ${{secrets.AWS_BUCKET_NAME}} --key fetch_go_versions_lambda.zip --body ./deploy/lambda.zip --checksum-sha256 "$(openssl dgst -sha256 -binary ./deploy/lambda.zip | base64)"
 
   PushToS3CustomAuthLambda:
     needs: TestCustomAuthLambda
@@ -196,6 +196,5 @@ jobs:
 
       - name: Upload to S3
         working-directory: ./custom_auth
-        # run: aws s3 cp ./deploy/lambda.zip s3://${{secrets.AWS_BUCKET_NAME}}/custom_auth_lambda.zip
         run: aws s3api put-object --bucket ${{secrets.AWS_BUCKET_NAME}} --key custom_auth_lambda.zip --body ./deploy/lambda.zip --checksum-sha256 "$(openssl dgst -sha256 -binary ./deploy/lambda.zip | base64)"
   ###
