@@ -2,9 +2,13 @@
 
 Simple AWS Lambda Functions written in Go to facilitate my exploration of building applications in AWS
 
-1. `return_ip`         - returns IP address of the Lambda function
-2. `fetch_go_versions` - returns JSON with recent 5 Go versions
-3. `custom_auth`       - custom Lambda authorizer (only supports payload format `version 1.0`) that controls access to above 2 functions when calling via API Gateway
+This project is part of one big project where I research how to build infrastructure in AWS for 2-tier application (and application as well, of course) :
+1. [Terraform](https://github.com/MikhailMS/aws-2tier-lambda-api) contains all the terraform code to deploy required infra & application code
+2. [Simple Web GUI](https://github.com/MikhailMS/aws-simple-web-gui) contains code for simple Web GUI to bridge the gap between user and Lambda functions
+3. Lambda functions (this project) contain code for 3 Lambda functions that replicate simple backend functions
+    1. `return_ip`         - returns IP address of the Lambda function
+    2. `fetch_go_versions` - returns JSON with recent 5 Go versions
+    3. `custom_auth`       - custom Lambda authorizer (only supports payload format `version 1.0`) that controls access to above 2 functions when calling via API Gateway
 
 
 ## Notes
