@@ -245,7 +245,7 @@ jobs:
       - name: Upload Go function
         uses: actions/upload-artifact@v2
         with:
-          name: custom_auth_lambda.zip
+          name: custom_auth_v2_lambda.zip
           path: ./custom_auth_v2/deploy/lambda.zip
 
       - name: Configure AWS Credentials
