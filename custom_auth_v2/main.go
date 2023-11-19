@@ -37,7 +37,7 @@ func generatePolicy(principalId, effect, resource string) events.APIGatewayV2Cus
 	return authResponse
 }
 
-func handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV1Request) (events.APIGatewayV2CustomAuthorizerIAMPolicyResponse, error) {
+func handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Request) (events.APIGatewayV2CustomAuthorizerIAMPolicyResponse, error) {
   // Step 1. Get Authorization token from Request
   // bounds := len(event.AuthorizationToken)
 	// token := event.AuthorizationToken[7:bounds]
@@ -78,7 +78,7 @@ func handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV1Req
 
   principal, ok := claims["principalID"].(string)
   if ok {
-    return generatePolicy(principal, "Allow", event.MethodArn), nil
+    return generatePolicy(principal, "Allow", event.RouteArn), nil
   }
 
   // This is only called if everything is great, but principalID is not encoded into token

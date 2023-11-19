@@ -19,11 +19,10 @@ func TestHandler(t *testing.T) {
     headers := make(map[string]string)
     headers["Authorization"] = ""
 
-    _, err := handler(context.Background(), events.APIGatewayV2CustomAuthorizerV1Request{
-      Type:               "TOKEN",
-      AuthorizationToken: "",
-      MethodArn:          "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
-      Headers:            headers,
+    _, err := handler(context.Background(), events.APIGatewayV2CustomAuthorizerV2Request{
+      Type:     "REQUEST",
+      RouteArn: "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
+      Headers:  headers,
     })
 
 		if err == nil {
@@ -40,11 +39,10 @@ func TestHandler(t *testing.T) {
     expectedResponse := events.APIGatewayV2CustomAuthorizerIAMPolicyResponse{}
     expectedError    := "token is malformed: token contains an invalid number of segments"
 
-    response, err := handler(context.Background(), events.APIGatewayV2CustomAuthorizerV1Request{
-      Type:               "TOKEN",
-      AuthorizationToken: "",
-      MethodArn:          "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
-      Headers:            headers,
+    response, err := handler(context.Background(), events.APIGatewayV2CustomAuthorizerV2Request{
+      Type:     "REQUEST",
+      RouteArn: "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
+      Headers:  headers,
     })
 		if err == nil {
 			t.Fatal("Error failed to trigger with an invalid request")
@@ -84,11 +82,10 @@ func TestHandler(t *testing.T) {
     headers := make(map[string]string)
     headers["Authorization"] = signed_token
 
-    response, err := handler(context.Background(), events.APIGatewayV2CustomAuthorizerV1Request{
-      Type:               "TOKEN",
-      AuthorizationToken: "",
-      MethodArn:          "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
-      Headers:            headers,
+    response, err := handler(context.Background(), events.APIGatewayV2CustomAuthorizerV2Request{
+      Type:     "REQUEST",
+      RouteArn: "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
+      Headers:  headers,
     })
 		if err != nil {
       t.Fatal("Everything should be ok; ", err, "; Signed Token: ", signed_token)
@@ -114,11 +111,10 @@ func TestHandler(t *testing.T) {
     // Create expectedResponse
     expectedResponse := events.APIGatewayV2CustomAuthorizerIAMPolicyResponse{}
 
-    response, err := handler(context.Background(), events.APIGatewayV2CustomAuthorizerV1Request{
-      Type:               "TOKEN",
-      AuthorizationToken: "",
-      MethodArn:          "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
-      Headers:            headers,
+    response, err := handler(context.Background(), events.APIGatewayV2CustomAuthorizerV2Request{
+      Type:     "REQUEST",
+      RouteArn: "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
+      Headers:  headers,
     })
 		if err == nil {
       t.Fatal("Everything should be ok; ", err, "; Signed Token: ", signed_token)
@@ -148,11 +144,10 @@ func TestHandler(t *testing.T) {
     expectedResponse := events.APIGatewayV2CustomAuthorizerIAMPolicyResponse{}
     expectedError    := "token has invalid claims: token is expired"
 
-    response, err := handler(context.Background(), events.APIGatewayV2CustomAuthorizerV1Request{
-      Type:               "TOKEN",
-      AuthorizationToken: "",
-      MethodArn:          "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
-      Headers:            headers,
+    response, err := handler(context.Background(), events.APIGatewayV2CustomAuthorizerV2Request{
+      Type:     "REQUEST",
+      RouteArn: "arn:aws:execute-api:eu-west-2:123456789012:/test/POST/test",
+      Headers:  headers,
     })
 		if err == nil {
 			t.Fatal("Error failed to trigger with an invalid request")
