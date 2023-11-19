@@ -31,6 +31,27 @@ jobs:
       working-directory: ./custom_auth
       run: go test -v ./...
 
+  TestCustomAuthV2Lambda:
+    name: Test Custom Auth Lambda against last 3 Go versions
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        go: [1.18, 1.19, 1.20.0]
+        os:   [ubuntu-20.04]
+    steps:
+    - name: Set up Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go }}
+
+    - name: Run tests
+      working-directory: ./custom_auth_v2
+      run: go test -v ./...
+
   TestFetchGoVersionsLambda:
     name: Test Fetch Go Versions Lambda  against last 3 Go versions
     runs-on: ${{ matrix.os }}
@@ -197,4 +218,45 @@ jobs:
       - name: Upload to S3
         working-directory: ./custom_auth
         run: aws s3api put-object --bucket ${{secrets.AWS_BUCKET_NAME}} --key custom_auth_lambda.zip --body ./deploy/lambda.zip --checksum-sha256 "$(openssl dgst -sha256 -binary ./deploy/lambda.zip | base64)"
+
+  PushToS3CustomAuthV2Lambda:
+    needs: TestCustomAuthV2Lambda
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Checkout
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.20.0
+
+      - name: Create deploy folder
+        working-directory: ./custom_auth_v2
+        run: mkdir ./deploy
+      - name: Build Go function
+        working-directory: ./custom_auth_v2
+        run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-X main.TokenSecret=${{secrets.TOKEN_SECRET}}" -tags lambda.norpc -o bootstrap main.go
+
+      - name: Zip Custom Auth function
+        working-directory: ./custom_auth_v2
+        run: zip -r -q ./deploy/lambda.zip bootstrap
+
+      - name: Upload Go function
+        uses: actions/upload-artifact@v2
+        with:
+          name: custom_auth_v2_lambda.zip
+          path: ./custom_auth_v2/deploy/lambda.zip
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            eu-west-2
+
+      - name: Upload to S3
+        working-directory: ./custom_auth_v2
+        run: aws s3api put-object --bucket ${{secrets.AWS_BUCKET_NAME}} --key custom_auth_v2_lambda.zip --body ./deploy/lambda.zip --checksum-sha256 "$(openssl dgst -sha256 -binary ./deploy/lambda.zip | base64)"
+
   ###
