@@ -52,10 +52,14 @@ func handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Req
   // bounds := len(event.AuthorizationToken)
 	// token := event.AuthorizationToken[7:bounds]
 	// token := event.AuthorizationToken
-  token, ok := event.Headers["Authorization"]
+  token, ok := event.Headers["authorization"]
   
   if !ok {
-    return events.APIGatewayV2CustomAuthorizerIAMPolicyResponse{}, errors.New(fmt.Sprintf("Error: No Authorization header set; %s", keysAsString(event.Headers)))
+    token, ok = event.Headers["Authorization"]
+
+    if !ok {
+      return events.APIGatewayV2CustomAuthorizerIAMPolicyResponse{}, errors.New(fmt.Sprintf("Error: No Authorization header set; %s", keysAsString(event.Headers)))
+    }
   }
 
   token = strings.TrimSpace(token)
