@@ -4,6 +4,7 @@ import (
   "context"
   "errors"
   "fmt"
+  "strings"
 
   "github.com/golang-jwt/jwt/v5"
 
@@ -48,6 +49,7 @@ func handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Req
     return events.APIGatewayV2CustomAuthorizerIAMPolicyResponse{}, errors.New("Error: Invalid auth token")
   }
 
+  token = strings.TrimSpace(token)
   if len(token) == 0 {
     return events.APIGatewayV2CustomAuthorizerIAMPolicyResponse{}, errors.New("Error: Invalid auth token")
   }
