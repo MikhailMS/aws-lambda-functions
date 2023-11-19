@@ -46,7 +46,7 @@ func handler(ctx context.Context, event events.APIGatewayV2CustomAuthorizerV2Req
   token, ok := event.Headers["Authorization"]
   
   if !ok {
-    return events.APIGatewayV2CustomAuthorizerIAMPolicyResponse{}, errors.New("Error: Invalid auth token")
+    return events.APIGatewayV2CustomAuthorizerIAMPolicyResponse{}, errors.New("Error: No Authorization header set")
   }
 
   token = strings.TrimSpace(token)
