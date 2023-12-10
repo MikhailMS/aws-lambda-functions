@@ -8,8 +8,8 @@ This project is part of one big project where I research how to build infrastruc
 3. Lambda functions (this project) contain code for 3 Lambda functions that replicate simple backend functions
     1. `return_ip`         - returns IP address of the Lambda function
     2. `fetch_go_versions` - returns JSON with recent 5 Go versions
-    3. `custom_auth`       - custom Lambda authorizer (only supports payload format `version 1.0`) that controls access to above 2 functions when calling via API Gateway
-    3. `custom_auth_v2`    - custom Lambda authorizer (only supports payload format `version 2.0`) that controls access to above 2 functions when calling via API Gateway
+    3. `custom_auth`       - custom Lambda authorizer (only supports payload format `version 1.0`) that controls access to functions `1 & 2` when calling via API Gateway
+    4. `custom_auth_v2`    - custom Lambda authorizer (only supports payload format `version 2.0`) that controls access to functions `1 & 2` when calling via API Gateway
 
 
 ## Notes
